@@ -38,17 +38,33 @@
 
 (defn chordsC [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
-  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 1)))
-  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 1)))
+  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 0)))
+  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 0)))
   (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 0)))
   (apply-at (m (+ 16 beat-num)) chordsD m (+ 16 beat-num) [])
   )
 
 (defn chordsD [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord (chord :A3 :minor)))
-  (at (m (+ 4 beat-num)) (play-chord (chord :G3 :minor)))
-  (at (m (+ 8 beat-num)) (play-chord (chord :F3 :minor)))
-  (at (m (+ 12 beat-num)) (play-chord (chord :G3 :minor)))
+  (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 0)))
+  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
+  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
+  (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
+  (apply-at (m (+ 16 beat-num)) chordsE m (+ 16 beat-num) [])
+  )
+
+(defn chordsE [m beat-num]
+  (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
+  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 1)))
+  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 1)))
+  (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 2)))
+  (apply-at (m (+ 16 beat-num)) chordsF m (+ 16 beat-num) [])
+  )
+
+(defn chordsF [m beat-num]
+  (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 1)))
+  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
+  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
+  (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :F3 :dim) 1)))
   (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) [])
   )
 
