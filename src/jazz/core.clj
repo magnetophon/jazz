@@ -10,6 +10,15 @@
 ;; it was not shown in the video
 (defn play-chord [a-chord]
   (doseq [note a-chord] (piano note)))
+(defn arpeggio
+  "strum trough"
+  [a-chord m beat-num]
+  (dorun
+  (at (m (+ 0 beat-num)) (piano (nth a-chord 0)))
+  (at (m (+ 1/4 beat-num)) (piano (nth a-chord 1)))
+  ))
+
+(arpeggio (chord :F3 :major) metro (metro))
 
 (play-chord (chord :F3 :major))
 (play-chord (chord :A3 :minor))
@@ -81,17 +90,6 @@
 (scale :C3 :major)
 (stop)
 
-(def scale-degrees [:vi :vii :i+ :_ :vii :_ :i+ :vii :vi :_ :vii :_])
-(def pitches (degrees->pitches scale-degrees :dorian :C4))
-
-(defn play [time notes sep]
-  (let [note (first notes)]
-    (when note
-      (at time (saw (midi->hz note))))
-    (let [next-time (+ time sep)]
-      (apply-at next-time play [next-time (rest notes) sep]))))
-
-
 (defn bpm
   "Higher order function. Returns another fn to compute the
   time offset in milliseconds for a beat at given `tempo`."
@@ -161,3 +159,4 @@
   (play-tune piano  60 :c4 :egyptian (arpeggiate 3 melody)) ; my favourite!
   (play-tune piano  60 :c4 :diminished (arpeggiate 4 (reverse melody)))
   ;; )
+(dorun (map-indexed #(at (+ (now) (* % 200)) (piano (+ 60 %2))) [0 2 7 12 24 19 14 12]))
