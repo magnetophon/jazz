@@ -10,33 +10,42 @@
 ;; it was not shown in the video
 (defn play-chord [a-chord]
   (doseq [note a-chord] (piano note)))
-(println (metro))
-(defn my-strum
-  "strum trough"
-  [pTime chord-root chord-name inversion nrNotes]
-  ;; (arpeggio pTime (invert-chord(chord chord-root chord-name inversion) 12 ))
-
-  (def theChord (chord chord-root chord-name inversion))
-
-  (dotimes [i nrNotes]
-    (at (metro (+ pTime (/ (* 4 i) nrNotes) (metro)))
-        (piano (first (invert-chord theChord i)))))
-  )
-
-(stop)
 
 (defonce metro (metronome 120))
 (metro)
 (metro (+ 1 (metro)))
-;; We can use recursion to keep playing the chord progression
+
+(defn my-strum
+  "strum trough"
+  [pTime chord-root chord-name inversion nrNotes length]
+  ;; (arpeggio pTime (invert-chord(chord chord-root chord-name inversion) 12 ))
+
+  (def theChord (chord chord-root chord-name (+ 5 inversion)))
+
+  (dotimes [i (* 2  nrNotes)]
+    (at (metro (+ pTime (/ (* (+ 1 length) i) (* 2 nrNotes)) (metro)))
+        (piano (first (invert-chord theChord i )))))
+  )
+(mouse-x )
+
+
+(play-song)
+(defn play-song
+  "play trough the whole song"
+  []
+  (dotimes my-strum)
+  )
+
+
 
 (defn chordsA []
-  (my-strum 0  :C4 :major  -4 12)
-  (my-strum 4  :C4 :minor  -4 12)
-  (my-strum 8  :A3 :minor7 -4 12)
-  (my-strum 12 :F3 :major  -4 12)
-  (apply-at (metro (+ 16 (metro))) chordsA []))
+  (my-strum 0  :C2 :major  0 6 3)
+  (my-strum 4  :C2 :minor  0 6 3)
+  (my-strum 8  :A1 :minor7 0 6 3)
+  (my-strum 12 :F1 :major  0 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsB []))
 (chordsA)
+(stop)
 
 (play-chord 12 (:F3 :major) 0)
 ;; (defn chordsA [m beat-num]
@@ -47,45 +56,45 @@
 ;;   (apply-at (m (+ 16 beat-num)) chordsB m (+ 16 beat-num) [])
 ;;   )
 
-(defn chordsB [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord (chord :A3 :minor)))
-  (at (m (+ 4 beat-num)) (play-chord (chord :G3 :minor)))
-  (at (m (+ 8 beat-num)) (play-chord (chord :F3 :minor)))
-  (at (m (+ 12 beat-num)) (play-chord (chord :G3 :minor)))
-  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) []))
+(defn chordsB []
+  (my-strum 0   :A1 :minor 0 6 3)
+  (my-strum 4   :G1 :minor 0 6 3)
+  (my-strum 8   :F1 :minor 0 6 3)
+  (my-strum 12  :G1 :minor 0 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsC []))
 
-(defn chordsC [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
-  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 0)))
-  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 0)))
-  (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 0)))
-  (apply-at (m (+ 16 beat-num)) chordsD m (+ 16 beat-num) []))
+(defn chordsC []
+  (my-strum 0  :C2 :m9     0 6 3)
+  (my-strum 4  :C2 :minor  0 6 3)
+  (my-strum 8  :A1 :dim    0 6 3)
+  (my-strum 12 :F1 :major  0 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsD []))
 
-(defn chordsD [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 0)))
-  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
-  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
-  (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
-  (apply-at (m (+ 16 beat-num)) chordsE m (+ 16 beat-num) []))
+(defn chordsD []
+  (my-strum 0  :A1 :minor 0 6 3)
+  (my-strum 4  :G1 :minor 0 6 3)
+  (my-strum 8  :F1 :minor 0 6 3)
+  (my-strum 12 :G1 :minor 0 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsE []))
 
-(defn chordsE [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
-  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 1)))
-  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 1)))
-  (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 2)))
-  (apply-at (m (+ 16 beat-num)) chordsF m (+ 16 beat-num) []))
+(defn chordsE []
+  (my-strum 0  :C2 :m9    0 6 3)
+  (my-strum 4  :C2 :minor 0 6 3)
+  (my-strum 8  :A1 :dim   1 6 3)
+  (my-strum 12 :F1 :major 2 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsF []))
 
-(defn chordsF [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 1)))
-  (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
-  (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
-  (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :F3 :dim) 1)))
-  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) []))
+(defn chordsF []
+  (my-strum 0  :A1 :minor 1 6 3)
+  (my-strum 4  :G1 :minor 0 6 3)
+  (my-strum 8  :F1 :minor 0 6 3)
+  (my-strum 12 :F1 :dim   1 6 3)
+  (apply-at (metro (+ 15 (metro))) chordsC []))
 
-(defn chordsEnd [m beat-num]
-  (at (m (+ 0 beat-num)) (play-chord (chord :A3 :minor)))
-  (at (m (+ 4 beat-num)) (play-chord (chord :G3 :minor)))
-  (at (m (+ 8 beat-num)) (play-chord (chord :F3 :minor)))
+(defn chordsEnd []
+  (my-strum 0  beat-num)) (play-chord (chord :A3 :minor)))
+  (my-strum 4  beat-num)) (play-chord (chord :G3 :minor)))
+  (my-strum 8  beat-num)) (play-chord (chord :F3 :minor)))
   ;; (apply-at (m (+ 16 beat-num)) chordsA m (+ 16 beat-num) [])
 )
 
