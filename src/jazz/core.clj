@@ -13,35 +13,23 @@
 (defn arpeggio
   "strum trough"
   [pTime a-chord nr]
-  ;; (at (m (+ (/ 1 nr) beat-num)) (piano (first (invert-chord a-chord 1))))
   (dotimes [i nr] (at (metro (+ pTime (/ i nr) (metro))) (piano (first (invert-chord a-chord i)))))
-  ;; (dorun
-  ;; (at (m (+ 0 beat-num)) (piano (nth a-chord 0)))
-  ;; (at (m (+ 1/4 beat-num)) (piano (nth a-chord 1)))
-  ;; (at (m (+ 2/4 beat-num)) (piano (nth a-chord 2)))
-  ;; (at (m (+ 3/4 beat-num)) (piano (nth a-chord (3 % (length a-chord)))))
-  ;; (apply-at (m (+ 1 beat-num)) arpeggio a-chord m(+ 1 beat-num) [] nr)
   ))
 (println (metro))
-(defn my-strum [pTime chord-root chord-name inversion] (arpeggio pTime (invert-chord(chord chord-root chord-name) (-  inversion 9)) 12/ ))
+(defn my-strum
+  "strum trough"
+  [pTime chord-root chord-name inversion nrNotes]
+  ;; (arpeggio pTime (invert-chord(chord chord-root chord-name inversion) 12 ))
 
-(invert-chord(chord :F3 :major) 1)
-(chord :F3 :major)
-(chord [:F3 :major])
+  (def theChord (chord chord-root chord-name inversion))
+
+  (dotimes [i nrNotes] (at (metro (+ pTime (/ i nrNotes) (metro))) (piano (first (invert-chord theChord i))))))
+( chord :F3 :major 9)
 
 
-(defn mycho [chord-root chord-name] (chord chord-root chord-name) )
-(mycho :F3 :major)
 
-(:F3 :major)
 (arpeggio 4 (chord :F3 :major) ) 6)
 (stop)
-(play-chord 0 :F3 :major 1)
-(play-chord 0 (:F3 :major))
-(play-chord (chord :A3 :minor))
-(play-chord (chord :G3 :minor))
-(play-chord (chord :F3 :minor))
-(play-chord (chord :C4 :minor))
 
 (defonce metro (metronome 120))
 (metro)
@@ -55,10 +43,10 @@
 (at (metro (+ 0 (metro))) (play-chord (chord :C4 :major)))
 
 (defn chordsA []
-  (my-strum 0  :C4 :major 0)
-  (my-strum 4  :C4 :minor 0)
-  (my-strum 8  :A3 :minor7 0)
-  (my-strum 12 :F3 :major 0)
+  (my-strum 0  :C4 :major  -4 8)
+  (my-strum 4  :C4 :minor  -4 8)
+  (my-strum 8  :A3 :minor7 -4 8)
+  (my-strum 12 :F3 :major  -4 8)
   (apply-at (metro (+ 16 (metro))) chordsA [])
   )
 (chordsA)
