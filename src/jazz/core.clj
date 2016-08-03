@@ -10,11 +10,6 @@
 ;; it was not shown in the video
 (defn play-chord [a-chord]
   (doseq [note a-chord] (piano note)))
-(defn arpeggio
-  "strum trough"
-  [pTime a-chord nr]
-  (dotimes [i nr] (at (metro (+ pTime (/ i nr) (metro))) (piano (first (invert-chord a-chord i)))))
-  ))
 (println (metro))
 (defn my-strum
   "strum trough"
@@ -23,12 +18,11 @@
 
   (def theChord (chord chord-root chord-name inversion))
 
-  (dotimes [i nrNotes] (at (metro (+ pTime (/ i nrNotes) (metro))) (piano (first (invert-chord theChord i))))))
-( chord :F3 :major 9)
+  (dotimes [i nrNotes]
+    (at (metro (+ pTime (/ (* 4 i) nrNotes) (metro)))
+        (piano (first (invert-chord theChord i)))))
+  )
 
-
-
-(arpeggio 4 (chord :F3 :major) ) 6)
 (stop)
 
 (defonce metro (metronome 120))
@@ -36,19 +30,12 @@
 (metro (+ 1 (metro)))
 ;; We can use recursion to keep playing the chord progression
 
-(defn play-chords-at [pTime a-chord inversion]
-  (play-chord pTime  (invert-chord(chord a-chord) inversion))
-  )
-
-(at (metro (+ 0 (metro))) (play-chord (chord :C4 :major)))
-
 (defn chordsA []
-  (my-strum 0  :C4 :major  -4 8)
-  (my-strum 4  :C4 :minor  -4 8)
-  (my-strum 8  :A3 :minor7 -4 8)
-  (my-strum 12 :F3 :major  -4 8)
-  (apply-at (metro (+ 16 (metro))) chordsA [])
-  )
+  (my-strum 0  :C4 :major  -4 12)
+  (my-strum 4  :C4 :minor  -4 12)
+  (my-strum 8  :A3 :minor7 -4 12)
+  (my-strum 12 :F3 :major  -4 12)
+  (apply-at (metro (+ 16 (metro))) chordsA []))
 (chordsA)
 
 (play-chord 12 (:F3 :major) 0)
@@ -65,47 +52,42 @@
   (at (m (+ 4 beat-num)) (play-chord (chord :G3 :minor)))
   (at (m (+ 8 beat-num)) (play-chord (chord :F3 :minor)))
   (at (m (+ 12 beat-num)) (play-chord (chord :G3 :minor)))
-  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) [])
-  )
+  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) []))
 
 (defn chordsC [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
   (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 0)))
   (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 0)))
   (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 0)))
-  (apply-at (m (+ 16 beat-num)) chordsD m (+ 16 beat-num) [])
-  )
+  (apply-at (m (+ 16 beat-num)) chordsD m (+ 16 beat-num) []))
 
 (defn chordsD [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 0)))
   (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
   (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
   (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
-  (apply-at (m (+ 16 beat-num)) chordsE m (+ 16 beat-num) [])
-  )
+  (apply-at (m (+ 16 beat-num)) chordsE m (+ 16 beat-num) []))
 
 (defn chordsE [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord (chord :C4 :m9)))
   (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :C4 :minor) 1)))
   (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :A3 :dim) 1)))
   (at (m (+ 12 beat-num)) (play-chord (invert-chord  (chord :F3 :major) 2)))
-  (apply-at (m (+ 16 beat-num)) chordsF m (+ 16 beat-num) [])
-  )
+  (apply-at (m (+ 16 beat-num)) chordsF m (+ 16 beat-num) []))
 
 (defn chordsF [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord  (invert-chord (chord :A3 :minor) 1)))
   (at (m (+ 4 beat-num)) (play-chord (invert-chord (chord :G3 :minor) 0)))
   (at (m (+ 8 beat-num)) (play-chord (invert-chord (chord :F3 :minor) 0)))
   (at (m (+ 12 beat-num)) (play-chord (invert-chord (chord :F3 :dim) 1)))
-  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) [])
-  )
+  (apply-at (m (+ 16 beat-num)) chordsC m (+ 16 beat-num) []))
 
 (defn chordsEnd [m beat-num]
   (at (m (+ 0 beat-num)) (play-chord (chord :A3 :minor)))
   (at (m (+ 4 beat-num)) (play-chord (chord :G3 :minor)))
   (at (m (+ 8 beat-num)) (play-chord (chord :F3 :minor)))
   ;; (apply-at (m (+ 16 beat-num)) chordsA m (+ 16 beat-num) [])
-  )
+)
 
 (chordsA  metro (metro))
 (chordsEnd  metro (metro))
@@ -143,7 +125,7 @@
   Plays notes in separate thread."
   [inst bpm# root scale melody]
   (let [tempo (bpm bpm#)
-        timings (reductions (fn[t [_ d]] (+ t (tempo (* d 4)))) (now) melody)
+        timings (reductions (fn [t [_ d]] (+ t (tempo (* d 4)))) (now) melody)
         root (note root)
         play-note (fn [timing [degree dur]]
                     (when-not (= :_ degree)
@@ -171,15 +153,15 @@
 
 ;; (comment
   ;; Play the original Happy Birthday tune in F4 major
-  (play-tune piano 120 :f4 :major melody)
+(play-tune piano 120 :f4 :major melody)
   ;; The following experiments go ever further away from the original melody...
   ;; All this is only achieved through manipulating the original sequence
   ;; and/or choosing unusual scales. Since we only specified the melody in
   ;; degrees it will always be "in tune", regardless of scale changes
-  (play-tune piano 120 :f4 :egyptian melody)
-  (play-tune piano 120 :c4 :major (repeat-notes 3 melody))
-  (play-tune piano 120 :c4 :major (arpeggiate 2 melody))
-  (play-tune piano  60 :c4 :egyptian (arpeggiate 3 melody)) ; my favourite!
-  (play-tune piano  60 :c4 :diminished (arpeggiate 4 (reverse melody)))
+(play-tune piano 120 :f4 :egyptian melody)
+(play-tune piano 120 :c4 :major (repeat-notes 3 melody))
+(play-tune piano 120 :c4 :major (arpeggiate 2 melody))
+(play-tune piano  60 :c4 :egyptian (arpeggiate 3 melody)) ; my favourite!
+(play-tune piano  60 :c4 :diminished (arpeggiate 4 (reverse melody)))
   ;; )
 (dorun (map-indexed #(at (+ (now) (* % 200)) (piano (+ 60 %2))) [0 2 7 12 24 19 14 12]))
