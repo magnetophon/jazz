@@ -23,7 +23,7 @@
   ;; (apply-at (m (+ 1 beat-num)) arpeggio a-chord m(+ 1 beat-num) [] nr)
   ))
 (println (metro))
-(defn play-chord [pTime chord-root chord-name inversion] (arpeggio pTime (invert-chord(chord chord-root chord-name) inversion) 6 ))
+(defn my-strum [pTime chord-root chord-name inversion] (arpeggio pTime (invert-chord(chord chord-root chord-name) (-  inversion 9)) 12/ ))
 
 (invert-chord(chord :F3 :major) 1)
 (chord :F3 :major)
@@ -55,11 +55,11 @@
 (at (metro (+ 0 (metro))) (play-chord (chord :C4 :major)))
 
 (defn chordsA []
-  (play-chord 0  :C4 :major 0)
-  (play-chord 4  :C4 :minor 0)
-  (play-chord 8  :A3 :minor7 0)
-  (play-chord 12 :F3 :major 0)
-  (apply-at (metro (+ 16 (metro))) chordsB metro (+ 16 (metro)) [])
+  (my-strum 0  :C4 :major 0)
+  (my-strum 4  :C4 :minor 0)
+  (my-strum 8  :A3 :minor7 0)
+  (my-strum 12 :F3 :major 0)
+  (apply-at (metro (+ 16 (metro))) chordsA [])
   )
 (chordsA)
 
