@@ -20,13 +20,12 @@
   [pTime chord-root chord-name inversion nrNotes length]
   ;; (arpeggio pTime (invert-chord(chord chord-root chord-name inversion) 12 ))
 
-  (def theChord (chord chord-root chord-name (+ 5 inversion)))
+  (def theChord (chord chord-root chord-name inversion))
 
-  (dotimes [i (* 2  nrNotes)]
-    (at (metro (+ pTime (/ (* (+ 1 length) i) (* 2 nrNotes)) (metro)))
-        (piano (first (invert-chord theChord i )))))
+  (dotimes [i  nrNotes]
+    (at (metro (+ pTime (/ (* length i) nrNotes) (metro)))
+        (piano (first (invert-chord theChord  (+ 4 i) )))))
   )
-(mouse-x )
 
 
 (play-song)
@@ -39,10 +38,10 @@
 
 
 (defn chordsA []
-  (my-strum 0  :C2 :major  0 6 3)
-  (my-strum 4  :C2 :minor  0 6 3)
-  (my-strum 8  :A1 :minor7 0 6 3)
-  (my-strum 12 :F1 :major  0 6 3)
+  (my-strum 0  :C2 :major  0 3 3/3)
+  (my-strum 4  :C2 :minor  0 3 1)
+  (my-strum 8  :A1 :minor7 0 4 4/3)
+  (my-strum 12 :F1 :major  0 5 5/3)
   (apply-at (metro (+ 15 (metro))) chordsB []))
 (chordsA)
 (stop)
@@ -57,39 +56,40 @@
 ;;   )
 
 (defn chordsB []
-  (my-strum 0   :A1 :minor 0 6 3)
-  (my-strum 4   :G1 :minor 0 6 3)
-  (my-strum 8   :F1 :minor 0 6 3)
-  (my-strum 12  :G1 :minor 0 6 3)
+  (my-strum 0   :A1 :minor 0 5 5/3)
+  (my-strum 4   :G1 :minor 0 5 5/3)
+  (my-strum 8   :F1 :minor 0 5 5/3)
+  (my-strum 12  :G1 :minor 0 5 5/3)
   (apply-at (metro (+ 15 (metro))) chordsC []))
 
 (defn chordsC []
-  (my-strum 0  :C2 :m9     0 6 3)
-  (my-strum 4  :C2 :minor  0 6 3)
-  (my-strum 8  :A1 :dim    0 6 3)
-  (my-strum 12 :F1 :major  0 6 3)
+  (my-strum 0  :C2 :m9     0 10 10/3)
+  (my-strum 4  :C2 :minor  0 7 7/3)
+  (my-strum 8  :A1 :dim    0 10 10/3)
+  (my-strum 12 :F1 :major  0 7 7/3)
   (apply-at (metro (+ 15 (metro))) chordsD []))
 
 (defn chordsD []
-  (my-strum 0  :A1 :minor 0 6 3)
-  (my-strum 4  :G1 :minor 0 6 3)
-  (my-strum 8  :F1 :minor 0 6 3)
-  (my-strum 12 :G1 :minor 0 6 3)
+  (my-strum 0  :A1 :minor 0 12 4)
+  (my-strum 4  :G1 :minor 0 10 10/3)
+  (my-strum 8  :F1 :minor 0 12 4)
+  (my-strum 12 :G1 :minor 0 7 7/3)
   (apply-at (metro (+ 15 (metro))) chordsE []))
 
 (defn chordsE []
-  (my-strum 0  :C2 :m9    0 6 3)
-  (my-strum 4  :C2 :minor 0 6 3)
-  (my-strum 8  :A1 :dim   1 6 3)
-  (my-strum 12 :F1 :major 2 6 3)
+  (my-strum 0  :C2 :m9    0 12 4)
+  (my-strum 4  :C2 :minor 0 12 4)
+  (my-strum 8  :A1 :dim   1 12 4)
+  (my-strum 12 :F1 :major 2 12 4)
   (apply-at (metro (+ 15 (metro))) chordsF []))
 
 (defn chordsF []
-  (my-strum 0  :A1 :minor 1 6 3)
-  (my-strum 4  :G1 :minor 0 6 3)
-  (my-strum 8  :F1 :minor 0 6 3)
-  (my-strum 12 :F1 :dim   1 6 3)
-  (apply-at (metro (+ 15 (metro))) chordsC []))
+  (my-strum 0  :A1 :minor 1 12 4)
+  (my-strum 4  :G1 :minor 0 12 4)
+  (my-strum 8  :F1 :minor 0 12 4)
+  (my-strum 12 :F1 :dim   1 12 4)
+  (apply-at (metro (+ 15 (metro))) chordsC [])
+  )
 
 (defn chordsEnd []
   (my-strum 0  beat-num)) (play-chord (chord :A3 :minor)))
