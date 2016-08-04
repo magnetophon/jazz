@@ -2,6 +2,7 @@
 (use 'overtone.core)
 (connect-external-server)
 (use 'overtone.inst.sampled-piano)
+(import java.awt.Toolkit)
 
 (def piano sampled-piano)
 (piano)
@@ -14,15 +15,27 @@
 (defonce metro (metronome 120))
 (metro)
 
+(defn screenX
+  "get the screen width"
+  []
+  (let [size (.getScreenSize (Toolkit/getDefaultToolkit))] (.getWidth size)))
+
+(defn screenY
+  "get the screen height"
+  []
+  (let [size (.getScreenSize (Toolkit/getDefaultToolkit))] (.getHeight size)))
+
+(Toolkit/getProperty)
+
 (defn mouseX
   "get mouse X position scaled from 0 to 1"
   []
-  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (/ (.getX point) 1919)))
+  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (/ (.getX point) (- (screenX) 1))))
 
 (defn mouseY
   "get mouse Y position scaled from 0 to 1, and flipped"
   []
-  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (+ 1 (* -1 (/ (.getY point) 1079)))))
+  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (+ 1 (* -1 (/ (.getY point) (- (screenY) 1))))))
 
 (defn my-strum
   "strum trough"
@@ -49,10 +62,9 @@
   "apply a function at beatNr beats from now"
   [beatNr function args]
   ;; (apply-at (metro (+ beatNr (metro))) function)
-  (apply-at (metro (+ beatNr (metro))) function args)
-  )
+  (apply-at (metro (+ beatNr (metro))) function args))
 
-(atBeat 0 my-strum  [:F1 :major 0 5 5/3] )
+(atBeat 0 my-strum  [:F1 :major 0 5 5/3])
 (chordsA)
 (stop)
 
