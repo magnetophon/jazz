@@ -13,28 +13,35 @@
 
 (defonce metro (metronome 120))
 (metro)
-(metro (+ 1 (metro)))
+
+(defn mouseX
+  "get mouse X position scaled from 0 to 1"
+  []
+  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (/ (.getX point) 1919)))
+
+(defn mouseY
+  "get mouse Y position scaled from 0 to 1, and flipped"
+  []
+  (let [point (.. java.awt.MouseInfo getPointerInfo getLocation)] (+ 1 (* -1 (/ (.getY point) 1079)))))
 
 (defn my-strum
   "strum trough"
   [pTime chord-root chord-name inversion nrNotes length]
-  ;; (arpeggio pTime (invert-chord(chord chord-root chord-name inversion) 12 ))
 
   (def theChord (chord chord-root chord-name inversion))
+  (def mouseNrNotes (max 1 (* 4 (mouseX) nrNotes)))
+  (def transposeNr (int (* 8 (mouseY))))
 
-  (dotimes [i  (* 1 nrNotes) ]
-    (at (metro (+ pTime (/ (* length i 1) nrNotes) (metro)))
-        (piano (first (invert-chord theChord (+ 4 (mod i 24 )) )))))
-  )
+  (dotimes [i   mouseNrNotes]
+    (at (metro (+ pTime (/ (* length i)  mouseNrNotes) (metro)))
+        (piano (first (invert-chord theChord (+  transposeNr (mod i 24))))))))
 
-
-(play-song)
-(defn play-song
-  "play trough the whole song"
-  []
-  (dotimes my-strum)
-  )
-
+;; (play-song)
+;; (defn play-song
+;;   "play trough the whole song"
+;;   []
+;;   (dotimes my-strum)
+;;   )
 
 
 (chordsA)
@@ -80,15 +87,14 @@
   (my-strum 4  :G1 :minor 0 12 4)
   (my-strum 8  :F1 :minor 0 12 4)
   (my-strum 12 :F1 :dim   1 7 7/3)
-  (apply-at (metro (+ 15 (metro))) chordsC [])
-  )
+  (apply-at (metro (+ 15 (metro))) chordsC []))
 
-(defn chordsEnd []
-  (my-strum 0  beat-num)) (play-chord (chord :A3 :minor)))
-  (my-strum 4  beat-num)) (play-chord (chord :G3 :minor)))
-  (my-strum 8  beat-num)) (play-chord (chord :F3 :minor)))
-  ;; (apply-at (m (+ 16 beat-num)) chordsA m (+ 16 beat-num) [])
-)
+;; (defn chordsEnd []
+;;   (my-strum 0  beat-num)) (play-chord (chord :A3 :minor)))
+;;   (my-strum 4  beat-num)) (play-chord (chord :G3 :minor)))
+;;   (my-strum 8  beat-num)) (play-chord (chord :F3 :minor)))
+;;   ;; (apply-at (m (+ 16 beat-num)) chordsA m (+ 16 beat-num) [])
+;; )
 
 (chordsA  metro (metro))
 (chordsEnd  metro (metro))
